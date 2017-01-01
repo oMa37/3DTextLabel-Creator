@@ -142,6 +142,8 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				if(isnull(inputtext)) return SCM(playerid, red, "Please enter a valid text");
 				
 				format(xInfo[id][Text], 74, inputtext);
+				FilterNewLines(inputtext, strlen(inputtext));
+				UpdateDynamic3DTextLabelText(xInfo[id][Label], xInfo[id][Color], inputtext);
 
 				cmd_createlabel(playerid, "");
 			}
@@ -245,7 +247,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 				if(isnull(inputtext)) return SCM(playerid, red, "Please enter a valid text");
 
 				format(xInfo[id][Text], 74, inputtext);
-
+				FilterNewLines(inputtext, strlen(inputtext));
 				UpdateDynamic3DTextLabelText(xInfo[id][Label], xInfo[id][Color], inputtext);
 				
 				new strcmd[5];
@@ -345,6 +347,8 @@ public LoadDynamicLabels() {
 			cache_get_value_name_float(i, "PosY", xInfo[id][PosY]);
 			cache_get_value_name_float(i, "PosZ", xInfo[id][PosZ]);
 
+			FilterNewLines(xInfo[id][Text], strlen(xInfo[id][Text]));
+
 			xInfo[id][Label] = CreateDynamic3DTextLabel(xInfo[id][Text], xInfo[id][Color], xInfo[id][PosX], xInfo[id][PosY],
 			xInfo[id][PosZ], LABEL_DISTANCE, INVALID_PLAYER_ID, INVALID_VEHICLE_ID, 0, xInfo[id][VirtualWorld], xInfo[id][Interior]);
 
@@ -412,4 +416,17 @@ IsNumeric(string[])
     	if (string[i] > '9' || string[i] < '0') return 0;
     }
     return 1;
+}
+
+FilterNewLines(text[], length) // Credits to Konstantinos
+{
+    for (new i; i != length; i++)
+    {
+        if (text[i] == '\\' && i != length - 1 && text[i + 1] == 'n')
+        {
+            text[i] = ' ';
+            text[i + 1] = '\n';
+            i++;
+        }
+    }
 }
